@@ -51,7 +51,7 @@ public class VirtualJoystick : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     void ControlJoystickLever(PointerEventData eventData)
     {
-        Vector2 inputDir = eventData.position - m_rectTransform.anchoredPosition;
+        Vector2 inputDir = new Vector2(eventData.position.x - m_rectTransform.position.x, eventData.position.y - m_rectTransform.position.y) ;
         Vector2 clampedDir = inputDir.magnitude < m_leverRange ? inputDir : inputDir.normalized * m_leverRange;
         m_lever.anchoredPosition = clampedDir;
         m_vtInputVector = clampedDir / m_leverRange;

@@ -57,9 +57,9 @@ public class CSVReader
         return;
     }
 
-    public static Dictionary<int, string> ReadString(string file)
+    public static Dictionary<string, string> ReadString(string file)
     {
-        Dictionary<int, string> list = new Dictionary<int, string>();
+        Dictionary<string, string> list = new Dictionary<string, string>();
         TextAsset data = Resources.Load($"CSV/{file}") as TextAsset;
 
         var lines = Regex.Split(data.text, LINE_SPLIT_RE);
@@ -79,7 +79,7 @@ public class CSVReader
             if (values == null)
                 return null;
 
-            int key = 0;
+            string key = string.Empty;
             string pairValue = string.Empty;
 
             for (int j = 0; j < header.Length && j < values.Length; j++)
@@ -90,14 +90,14 @@ public class CSVReader
 
                 if (header[j] == "index")
                 {
-                    key = Convert.ToInt32(values[j]);
+                    key = values[j];
                 }
                 else
                 {
                     pairValue = values[j].ToString();
                 }
             }
-            if (key == 0) continue;
+            if (key == string.Empty) continue;
             list.Add(key, pairValue);
         }
 

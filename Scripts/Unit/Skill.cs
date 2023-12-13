@@ -20,7 +20,7 @@ public class Skill : MonoBehaviour
     }
 
     GameObject summonObject;
-    SkillData m_Data;
+    public SkillData m_Data;
     List<SkillCondition> m_listConditions;
     List<SkillActivation> m_listActivations;
     List<SkillTarget> m_listTargets;

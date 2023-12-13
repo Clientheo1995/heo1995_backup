@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class Instance : MonoBehaviour
 {
-    public CanvasController canvas;
     [SerializeField] List<CryptureSlot> slots;
 
     [SerializeField] Button swapButton;
@@ -27,9 +26,9 @@ public class Instance : MonoBehaviour
 
     void OnEnable()
     {
-        for (int i = 0; i < DataManager.Instance.TempRoster.Length; i++)
-        {
-            slots[i].SetCrypture(canvas, DataManager.Instance.TempRoster[i].index);
-        }
+        //for (int i = 0; i < DataManager.Instance.TempRoster.Length; i++)
+        //{
+        //    slots[i].SetCrypture(canvas, DataManager.Instance.TempRoster[i].index);
+        //}
     }
 }

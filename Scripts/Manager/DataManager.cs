@@ -21,9 +21,10 @@ public class DataManager : Singleton<DataManager>
     public List<Transform> Layers;
 
     public Stage ThisStage;
-    public int RecentLayer = 0;
+    public int RecentLayer = -1;
     public bool KILLALL = false;
     public MapNode ThisNode;
+    public List<SkillData> RestSkillList = new List<SkillData>();
 
     //Table
     public Dictionary<string, string> StringTable = new Dictionary<string, string>();
@@ -46,9 +47,9 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, StageEvent> StageEventInfo = new Dictionary<int, StageEvent>();
     public Dictionary<int, StageShop> StageShopInfo = new Dictionary<int, StageShop>();
 
+
+    public List<Crypture> PlayerCryptureList = new List<Crypture>();
     #region
-    public List<TempGStarCrypture> GStarCrypture = new List<TempGStarCrypture>();
-    public TempGStarCrypture[] TempRoster = new TempGStarCrypture[3];
 
     public void Resume()
     {
@@ -56,191 +57,6 @@ public class DataManager : Singleton<DataManager>
             Time.timeScale = 1f;
         else
             Time.timeScale = 0f;
-    }
-
-    void MakeGStarCrypture()
-    {
-        TempGStarCrypture crypture = new TempGStarCrypture();
-        crypture.data = CryptureInfo[10];
-        crypture.star = 0;
-        crypture.index = 0;
-        crypture.color = new Color(178, 200, 125);
-        crypture.parts = new List<PartData>();
-        crypture.parts.Add(PartInfo[2000002]);
-        crypture.parts.Add(PartInfo[3000001]);
-        crypture.parts.Add(PartInfo[4000002]);
-        crypture.parts.Add(PartInfo[5000002]);
-        crypture.parts.Add(PartInfo[6000002]);
-        crypture.parts.Add(PartInfo[7000002]);
-        crypture.parts.Add(PartInfo[8000002]);
-        GStarCrypture.Add(crypture);
-
-        TempGStarCrypture crypture1 = new TempGStarCrypture();
-        crypture1.data = CryptureInfo[10];
-        crypture1.star = 1;
-        crypture1.index = 1;
-        crypture1.color = new Color(200, 100, 120);
-        crypture1.parts = new List<PartData>();
-        crypture1.parts.Add(PartInfo[2000004]);
-        crypture1.parts.Add(PartInfo[3000002]);
-        crypture1.parts.Add(PartInfo[4000004]);
-        crypture1.parts.Add(PartInfo[5000005]);
-        crypture1.parts.Add(PartInfo[6000004]);
-        crypture1.parts.Add(PartInfo[7000005]);
-        crypture1.parts.Add(PartInfo[8000005]);
-        GStarCrypture.Add(crypture1);
-
-        TempGStarCrypture crypture2 = new TempGStarCrypture();
-        crypture2.data = CryptureInfo[10];
-        crypture2.star = 2;
-        crypture2.index = 2;
-        crypture2.color = new Color(25, 25, 155);
-        crypture2.parts = new List<PartData>();
-        crypture2.parts.Add(PartInfo[2000007]);
-        crypture2.parts.Add(PartInfo[3000003]);
-        crypture2.parts.Add(PartInfo[4000008]);
-        crypture2.parts.Add(PartInfo[5000006]);
-        crypture2.parts.Add(PartInfo[6000005]);
-        crypture2.parts.Add(PartInfo[7000006]);
-        crypture2.parts.Add(PartInfo[8000008]);
-        GStarCrypture.Add(crypture2);
-
-        TempGStarCrypture crypture3 = new TempGStarCrypture();
-        crypture3.data = CryptureInfo[10];
-        crypture3.star = 3;
-        crypture3.index = 3;
-        crypture3.color = new Color(100, 100, 100);
-        crypture3.parts = new List<PartData>();
-        crypture3.parts.Add(PartInfo[2000009]);
-        crypture3.parts.Add(PartInfo[3000004]);
-        crypture3.parts.Add(PartInfo[4000009]);
-        crypture3.parts.Add(PartInfo[5000009]);
-        crypture3.parts.Add(PartInfo[6100001]);
-        crypture3.parts.Add(PartInfo[7100001]);
-        crypture3.parts.Add(PartInfo[8100002]);
-        GStarCrypture.Add(crypture3);
-
-        TempGStarCrypture crypture4 = new TempGStarCrypture();
-        crypture4.data = CryptureInfo[11];
-        crypture4.star = 0;
-        crypture4.index = 4;
-        crypture4.color = new Color(17, 132, 177);
-        crypture4.parts = new List<PartData>();
-        crypture4.parts.Add(PartInfo[2100002]);
-        crypture4.parts.Add(PartInfo[3100001]);
-        crypture4.parts.Add(PartInfo[4100001]);
-        crypture4.parts.Add(PartInfo[5000003]);
-        crypture4.parts.Add(PartInfo[6000003]);
-        crypture4.parts.Add(PartInfo[7000003]);
-        crypture4.parts.Add(PartInfo[8000003]);
-        GStarCrypture.Add(crypture4);
-
-        TempGStarCrypture crypture5 = new TempGStarCrypture();
-        crypture5.data = CryptureInfo[11];
-        crypture5.star = 1;
-        crypture5.index = 5;
-        crypture5.color = new Color(85, 35, 65);
-        crypture5.parts = new List<PartData>();
-        crypture5.parts.Add(PartInfo[2100004]);
-        crypture5.parts.Add(PartInfo[3100002]);
-        crypture5.parts.Add(PartInfo[4100005]);
-        crypture5.parts.Add(PartInfo[5000007]);
-        crypture5.parts.Add(PartInfo[6000008]);
-        crypture5.parts.Add(PartInfo[7000007]);
-        crypture5.parts.Add(PartInfo[8000006]);
-        GStarCrypture.Add(crypture5);
-
-        TempGStarCrypture crypture6 = new TempGStarCrypture();
-        crypture6.data = CryptureInfo[11];
-        crypture6.star = 2;
-        crypture6.index = 6;
-        crypture6.color = new Color(70, 70, 67);
-        crypture6.parts = new List<PartData>();
-        crypture6.parts.Add(PartInfo[2100007]);
-        crypture6.parts.Add(PartInfo[3100003]);
-        crypture6.parts.Add(PartInfo[4100007]);
-        crypture6.parts.Add(PartInfo[5000008]);
-        crypture6.parts.Add(PartInfo[6000006]);
-        crypture6.parts.Add(PartInfo[7100001]);
-        crypture6.parts.Add(PartInfo[8000009]);
-        GStarCrypture.Add(crypture6);
-
-        TempGStarCrypture crypture7 = new TempGStarCrypture();
-        crypture7.data = CryptureInfo[11];
-        crypture7.star = 3;
-        crypture7.index = 7;
-        crypture7.color = new Color(74, 74, 74);
-        crypture7.parts = new List<PartData>();
-        crypture7.parts.Add(PartInfo[2100009]);
-        crypture7.parts.Add(PartInfo[3100004]);
-        crypture7.parts.Add(PartInfo[4100009]);
-        crypture7.parts.Add(PartInfo[5000008]);
-        crypture7.parts.Add(PartInfo[6000009]);
-        crypture7.parts.Add(PartInfo[7000006]);
-        crypture7.parts.Add(PartInfo[8100002]);
-        GStarCrypture.Add(crypture7);
-
-        TempGStarCrypture crypture8 = new TempGStarCrypture();
-        crypture8.data = CryptureInfo[12];
-        crypture8.star = 0;
-        crypture8.index = 8;
-        crypture8.color = new Color(38, 75, 95);
-        crypture8.parts = new List<PartData>();
-        crypture8.parts.Add(PartInfo[2200002]);
-        crypture8.parts.Add(PartInfo[3200001]);
-        crypture8.parts.Add(PartInfo[4200003]);
-        crypture8.parts.Add(PartInfo[5000004]);
-        crypture8.parts.Add(PartInfo[6000007]);
-        crypture8.parts.Add(PartInfo[7000004]);
-        crypture8.parts.Add(PartInfo[8000004]);
-        GStarCrypture.Add(crypture8);
-
-        TempGStarCrypture crypture9 = new TempGStarCrypture();
-        crypture9.data = CryptureInfo[12];
-        crypture9.star = 1;
-        crypture9.index = 9;
-        crypture9.color = new Color(44, 37, 40);
-        crypture9.parts = new List<PartData>();
-        crypture9.parts.Add(PartInfo[2200004]);
-        crypture9.parts.Add(PartInfo[3200002]);
-        crypture9.parts.Add(PartInfo[4200006]);
-        crypture9.parts.Add(PartInfo[5200009]);
-        crypture9.parts.Add(PartInfo[6100002]);
-        crypture9.parts.Add(PartInfo[7000008]);
-        crypture9.parts.Add(PartInfo[8000007]);
-        GStarCrypture.Add(crypture9);
-
-        TempGStarCrypture crypture10 = new TempGStarCrypture();
-        crypture10.data = CryptureInfo[12];
-        crypture10.star = 2;
-        crypture10.index = 10;
-        crypture10.color = new Color(88, 67, 67);
-        crypture10.parts = new List<PartData>();
-        crypture10.parts.Add(PartInfo[2200007]);
-        crypture10.parts.Add(PartInfo[3200001]);
-        crypture10.parts.Add(PartInfo[4200007]);
-        crypture10.parts.Add(PartInfo[5000009]);
-        crypture10.parts.Add(PartInfo[6000009]);
-        crypture10.parts.Add(PartInfo[7000006]);
-        crypture10.parts.Add(PartInfo[8100001]);
-
-        GStarCrypture.Add(crypture10);
-
-        TempGStarCrypture crypture11 = new TempGStarCrypture();
-        crypture11.data = CryptureInfo[12];
-        crypture11.star = 3;
-        crypture11.index = 11;
-        crypture11.color = new Color(164, 164, 164);
-        crypture11.parts = new List<PartData>();
-        crypture11.parts.Add(PartInfo[2200009]);
-        crypture11.parts.Add(PartInfo[3200004]);
-        crypture11.parts.Add(PartInfo[4200009]);
-        crypture11.parts.Add(PartInfo[5000006]);
-        crypture11.parts.Add(PartInfo[6000006]);
-        crypture11.parts.Add(PartInfo[7100001]);
-        crypture11.parts.Add(PartInfo[8100002]);
-
-        GStarCrypture.Add(crypture);
     }
 
     #endregion
@@ -251,8 +67,10 @@ public class DataManager : Singleton<DataManager>
 
     void Start()
     {
+        PlayerPrefs.Save();
         m_UserData = new UserData();//플레이어 데이터 저장하는거 만들어야함
 
+        SetString("string", StringTable);
         SetData("attack_type", AttackTypeInfo);
         SetData("character", CryptureInfo);
         SetData("monster", MonsterInfo);
@@ -274,9 +92,8 @@ public class DataManager : Singleton<DataManager>
         SetData("stage", StageInfo);
         SetData("stage_event", StageEventInfo);
         SetData("stage_shop", StageShopInfo);
-        //SetData("mode", ModeInfo);
-        //ReadStringTable("string", StringTable);
-        MakeGStarCrypture();
+        SetData("mode", ModeInfo);
+        //SetString("string", StringTable);
         DATALOADCOMPLETE = true;
     }
 
@@ -372,6 +189,22 @@ public class DataManager : Singleton<DataManager>
         foreach (KeyValuePair<int, TileData> p in table)
         {
             classDic.Add(p.Key, p.Value);
+        }
+    }
+
+    void SetString(string csvName, Dictionary<string, string> stringDic)
+    {
+        Dictionary<string, string> table = CSVReader.ReadString(csvName);
+
+        if (table == null)
+        {
+            Debug.Log($"맵을 읽지 못했습니다.");
+            return;
+        }
+
+        foreach (KeyValuePair<string, string> p in table)
+        {
+            stringDic.Add(p.Key, p.Value);
         }
     }
 

@@ -11,6 +11,7 @@ public class TileEventListener : MonoBehaviour
     AttackType m_AttackType;
     Transform DrawTarget;
     Transform Owner;
+    AudioSource SFX;
 
     bool m_bCanAttack = true;
     bool m_bIsReadyTile = false;
@@ -18,8 +19,9 @@ public class TileEventListener : MonoBehaviour
 
     float m_fCurTime;
     float m_delay;
+    bool m_bIsBoss;
 
-    public void SetData(Transform owner, bool isReadyTile, AttackType attackType, Transform drawTarget, float damageBuff = 0f, float delay = 0f)
+    public void SetData(Transform owner, bool isReadyTile, AttackType attackType, Transform drawTarget, float damageBuff = 0f, float delay = 0f, bool isBoss = false)
     {
         Owner = owner;
         m_AttackType = attackType;
@@ -27,9 +29,10 @@ public class TileEventListener : MonoBehaviour
         DrawTarget = drawTarget;
         m_delay = delay;
         DamageBuff = damageBuff;
+        m_bIsBoss = isBoss;
         Damage = m_AttackType.attack_damage;
-        //if (!m_bIsReadyTile)
-        //    StartCoroutine(Dying());
+
+        SFX = transform.GetComponent<AudioSource>();
     }
 
     void Update()
@@ -56,7 +59,6 @@ public class TileEventListener : MonoBehaviour
             {
                 Destroy(gameObject);
             }
-
         }
     }
 
@@ -71,12 +73,19 @@ public class TileEventListener : MonoBehaviour
             {
                 if (m_AttackType.attack_type == EnAttackType.range || m_AttackType.attack_type == EnAttackType.missile)
                 {
-                    AttackManager.Instance.MakeBullet(m_AttackType, DamageBuff, DrawTarget, collision.transform);
+                    AttackManager.Instance.MakeBullet(m_AttackType, DamageBuff, DrawTarget, collision.transform, m_bIsBoss);
                     m_bCanAttack = false;
                 }
                 else
                 {
-                    AttackManager.Instance.MakeDamageTile(m_AttackType, DamageBuff, Owner, DrawTarget, transform.rotation);//그 자리에 생성, 공격자(타일의 부모)의 회전값을 넘겨줌
+                    if (Owner.name.CompareTo("first") == 0)
+                    {
+                        SFX.Stop();
+                        SFX.clip = Resources.Load<AudioClip>("Sound/attack_melee2");
+                        SFX.Play();
+                    }
+                    
+                    AttackManager.Instance.MakeDamageTile(m_AttackType, DamageBuff, Owner, DrawTarget, transform.rotation, m_bIsBoss);//그 자리에 생성, 공격자(타일의 부모)의 회전값을 넘겨줌
                     m_bCanAttack = false;
                 }
             }
@@ -95,7 +104,7 @@ public class TileEventListener : MonoBehaviour
                 }
                 if (collision.CompareTag("Player"))
                 {
-                    transform.parent.GetComponent<Monster>()?.CheckSkill(EnSkillConditionType.attack);
+                    Owner.GetComponent<Monster>()?.CheckSkill(EnSkillConditionType.attack);
                     collision.transform.GetComponent<Crypture>().CalculateDamage(Damage + DamageBuff);
                     Destroy(gameObject);
                 }

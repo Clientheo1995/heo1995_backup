@@ -7,13 +7,7 @@ public class Parts
     public List<PartData> m_listParts;//리스트구현이 맞나
     float m_nAddition;
     public Color m_color = Color.magenta;
-    Crypture crypture;
     public int TotalDMG;
-
-    public Parts(Crypture crypture)
-    {
-        this.crypture = crypture;
-    }
 
     public void AddPart(int index)
     {

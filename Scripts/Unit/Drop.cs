@@ -15,14 +15,16 @@ public class Drop : MonoBehaviour
     DropItem data;
     DropItemEffect effect;
 
+    Coroutine coroutine;
+
     public void SetData(InstanceController controller)
     {
         m_instanceController = controller;
-        m_spriteRenderer.sprite = Resources.Load<Sprite>($"TempImage/Item{(int)m_dropType}");
 
         List<DropItem> drops = new List<DropItem>();
         foreach (DropItem item in DataManager.Instance.DropItemInfo.Values)
         {
+            if (item.drop_item_effect == 210001) continue;//지스타 임시
             if (item.drop_item_2nd_type == EnDrop1stType.is1stItems)
             {
                 drops.Add(item);
@@ -75,16 +77,55 @@ public class Drop : MonoBehaviour
             data = null;
             m_dropType = EnDropType.None;
         }
+
+        string path = string.Empty;
+        switch (m_dropType)
+        {
+            case EnDropType.Utility:
+                switch (effect.drop_item_effect)
+                {
+                    case EnDropTypeEffect.Utility_freeze:
+                        path = "TempImage/btn_item_ice";
+                        break;
+                    case EnDropTypeEffect.Utility_damageUp:
+                        path = "TempImage/btn_item_sword";
+                        break;
+                    case EnDropTypeEffect.Utility_defUp:
+                        path = "TempImage/btn_item_coin";
+                        break;
+                    case EnDropTypeEffect.Utility_hpUp:
+                        path = "TempImage/btn_item_potion";
+                        break;
+                    default:
+                        break;
+                }
+                break;
+            case EnDropType.Currency:
+                path = "TempImage/btn_item_coin";
+                break;
+        }
+        m_spriteRenderer.sprite = Resources.Load<Sprite>(path);
         gameObject.SetActive(false);
     }
 
-    private void Update()
+    void Update()
     {
         if (DataManager.Instance.KILLALL)
         {
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
             Destroy(gameObject);
         }
     }
+
+    void OnEnable()
+    {
+        StartCoroutine(RemainTime());
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
@@ -99,15 +140,19 @@ public class Drop : MonoBehaviour
                     switch (effect.drop_item_effect)
                     {
                         case EnDropTypeEffect.Utility_freeze:
+                            Debug.Log("FREEZE");
                             StartCoroutine(ActivateBuff(effect.effect2));
                             break;
                         case EnDropTypeEffect.Utility_damageUp:
+                            Debug.Log("DAMAGE UP!!");
                             StartCoroutine(ActivateBuff(effect.effect2));
                             break;
                         case EnDropTypeEffect.Utility_defUp:
+                            Debug.Log("DEF UP!!");
                             StartCoroutine(ActivateBuff(effect.effect2));
                             break;
                         case EnDropTypeEffect.Utility_hpUp:
+                            Debug.Log("HP UP!!");
                             StartCoroutine(ActivateBuff(effect.effect2));
                             break;
                         default:
@@ -118,17 +163,25 @@ public class Drop : MonoBehaviour
                     playSfx.clip = coin;
                     playSfx.Play();
                     Debug.Log($"UserData Add Currency{effect.effect1}");
-                    StartCoroutine(Dying());
+                    
                     break;
                 case EnDropType.None:
                     Debug.Log("NONE !!!");
-                    StartCoroutine(Dying());
-                    break;
-                default:
-                    StartCoroutine(Dying());
                     break;
             }
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+                coroutine = null;
+            }
+            coroutine = StartCoroutine(Dying());
         }
+    }
+
+    IEnumerator RemainTime()
+    {
+        yield return new WaitForSeconds(5f);
+        Destroy(gameObject);
     }
 
     IEnumerator Dying()
@@ -141,14 +194,17 @@ public class Drop : MonoBehaviour
     {
         if (effect.drop_item_effect == EnDropTypeEffect.Utility_freeze)
         {
-            m_instanceController.Freeze(true);
+            //m_instanceController.Freeze(true);
             yield return new WaitForSeconds(time);
-            m_instanceController.Freeze(false);
+            //m_instanceController.Freeze(false);
         }
         else
         {
             m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, effect.effect1, effect.effect2, effect.effect3, effect.effect4, effect.effect5, effect.effect6);
+            m_instanceController.FirstCrypture.OnEffects(effect.drop_item_effect);
+
             yield return new WaitForSeconds(time);
+
             m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, -effect.effect1, -effect.effect2, -effect.effect3, -effect.effect4, -effect.effect5, -effect.effect6);
         }
 

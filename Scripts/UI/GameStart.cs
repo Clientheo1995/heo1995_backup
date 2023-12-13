@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameStart : MonoBehaviour
@@ -11,9 +12,10 @@ public class GameStart : MonoBehaviour
     void Start()
     {
         start.onClick.AddListener(() => {
-            canvas.OnPanel(EnUIPanel.StageSelect);
-            canvas.OffPanel(EnUIPanel.Header); 
-            canvas.OffPanel(EnUIPanel.GameStart);
+            SceneManager.LoadScene("Instance");
+            //OnPanel(EnUIPanel.StageSelect);
+            //OffPanel(EnUIPanel.Header); 
+            //OffPanel(EnUIPanel.GameStart);
         });
     }
 }

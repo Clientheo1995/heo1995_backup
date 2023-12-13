@@ -5,21 +5,27 @@ public class Unit
     [SerializeField]
     [Tooltip("유닛 체력")]
     protected float m_nHp;
+
     [SerializeField]
     [Tooltip("유닛 이동속도")]
     protected float m_fMoveSpeed;
+
     [SerializeField]
     [Tooltip("유닛 회전속도")]
     protected float m_fTurnSpeed;
+
     [SerializeField]
     [Tooltip("유닛 방어력")]
     protected float m_nDef;
+
     [SerializeField]
     [Tooltip("유닛 체력 재생")]
     protected float m_fHpRegen;
+
     [SerializeField]
     [Tooltip("유닛 사이즈X")]
     protected int m_nSizeX;
+
     [SerializeField]
     [Tooltip("유닛 사이즈Y")]
     protected int m_nSizeY;
@@ -47,7 +53,7 @@ public class Unit
 
     public void SetOrder()
     {
-        m_nOrder = DataManager.Instance.User.CryptureCount - 1;//로그인 시 할당되는 숫자지만, 로그라이크 특성상 상관없을듯?
+        //m_nOrder = DataManager.Instance.User.CryptureCount - 1;//로그인 시 할당되는 숫자지만, 로그라이크 특성상 상관없을듯?
     }
 
     public void HpRegen()

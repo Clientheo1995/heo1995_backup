@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 
 public class AttackManager : Singleton<AttackManager>
@@ -14,7 +11,7 @@ public class AttackManager : Singleton<AttackManager>
     List<List<GameObject>> ReadyCheckTileList;
 
     //얘는 캐릭터를 따라다녀야함
-    public TileEventListener MakeReadyTile(AttackType attackType, Transform owner, Transform destination)
+    public TileEventListener MakeReadyTile(AttackType attackType, Transform owner, Transform destination, bool isBoss = false)
     {
         if (ReadyCheckTileList == null)
             ReadyCheckTileList = new List<List<GameObject>>();
@@ -29,12 +26,13 @@ public class AttackManager : Singleton<AttackManager>
             Destroy(destination.GetChild(i).gameObject);
         }
 
+        TILE_SIZE = isBoss ? 1 : 1;//임시
         destination.gameObject.layer = owner.gameObject.layer;
         int tileIndex = attackType.attack_ready_check_idx;
-        TileEventListener tl = destination.gameObject.GetComponent<TileEventListener>();
-        if (tl == null)
-            tl = destination.gameObject.AddComponent<TileEventListener>();
-        tl.SetData(owner, true, attackType, destination);
+        TileEventListener tileListener = destination.gameObject.GetComponent<TileEventListener>();
+        if (tileListener == null)
+            tileListener = destination.gameObject.AddComponent<TileEventListener>();
+        tileListener.SetData(owner, true, attackType, destination);
 
         for (int i = 0; i < DataManager.Instance.AttackReadyCheckTableInfo[tileIndex].row; i++)
         {
@@ -45,18 +43,20 @@ public class AttackManager : Singleton<AttackManager>
 
                 Vector3 pos = new Vector3(colGap * TILE_SIZE, rowGap * TILE_SIZE, 0f) + destination.position;//y축은 데이터와 반대로 해야 화면상 좌표에 제대로 뜬다
                 GameObject tile = Instantiate(checkTile, pos, destination.rotation, destination);
+                tile.transform.localScale = new Vector3(TILE_SIZE, TILE_SIZE);
                 tile.layer = owner.gameObject.layer;
                 EnTileType tileType = (EnTileType)DataManager.Instance.AttackReadyCheckTableInfo[tileIndex].tileData[i * DataManager.Instance.AttackReadyCheckTableInfo[tileIndex].col + j];
-                tile.GetComponent<CheckTile>().SetData(tl, tileType);
+                tile.GetComponent<CheckTile>().SetData(tileListener, tileType);
             }
         }
 
-        return tl;
+        return tileListener;
     }
 
     //얘는 캐릭터를 따라다니면 안됨
-    public void MakeDamageTile(AttackType attackType, float damageBuff, Transform owner, Transform destination, Quaternion rotation)
+    public void MakeDamageTile(AttackType attackType, float damageBuff, Transform owner, Transform destination, Quaternion rotation, bool isBoss = false)
     {
+        TILE_SIZE = isBoss ? 1 : 1;
         int tileIndex = attackType.attack_damage_check_idx;
         ParticleSystem EffectType1 = checkTile.GetComponentInChildren<ParticleSystem>();
         GameObject newTileGroup = new GameObject("DamageTiles");
@@ -83,6 +83,7 @@ public class AttackManager : Singleton<AttackManager>
                 //https://m.blog.naver.com/dj3630/221447943453
                 //쿼터니언 값으로 변환이 되는데 이건 그대로 적용하면 안되는걸까
                 GameObject tile = Instantiate(checkTile, newTileGroup.transform);//빈 오브젝트 만들어서 그 엠티에 회전을 주고 그 아래에 타일을 배치하기
+                tile.transform.localScale = new Vector3(TILE_SIZE, TILE_SIZE);
                 tile.layer = newTileGroup.gameObject.layer;
                 tile.transform.SetLocalPositionAndRotation(pos, newTileGroup.transform.rotation);
                 tile.GetComponent<CheckTile>().SetData(tl, tileType);
@@ -90,7 +91,7 @@ public class AttackManager : Singleton<AttackManager>
         }
     }
 
-    public void MakeBullet(AttackType attackType, float damageBuff, Transform startTarget, Transform finishTarget)
+    public void MakeBullet(AttackType attackType, float damageBuff, Transform startTarget, Transform finishTarget, bool isBoss = false)
     {
         if (bullet == null)
         {
@@ -101,13 +102,13 @@ public class AttackManager : Singleton<AttackManager>
         if (attackType.attack_type == EnAttackType.missile)
         {
             GameObject newBullet = Instantiate(bullet, startTarget.position, startTarget.rotation);
-            newBullet.GetComponent<Bullet>().SetData(attackType, startTarget.parent, finishTarget, 10f, null, damageBuff);
+            newBullet.GetComponent<Bullet>().SetData(attackType, startTarget.parent, finishTarget, 10f, null, damageBuff, isBoss);
             newBullet.gameObject.layer = startTarget.gameObject.layer;
         }
         else if (attackType.attack_type == EnAttackType.range)
         {
             GameObject newBullet = Instantiate(bullet, startTarget.position, startTarget.rotation);
-            newBullet.GetComponent<Bullet>().SetData(attackType, startTarget.parent, finishTarget, 10f, null, damageBuff);
+            newBullet.GetComponent<Bullet>().SetData(attackType, startTarget.parent, finishTarget, 10f, null, damageBuff, isBoss);
             newBullet.gameObject.layer = startTarget.gameObject.layer;
         }
     }

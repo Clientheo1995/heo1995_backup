@@ -16,23 +16,25 @@ public class Bullet : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     float m_fCurTime;
     bool isFollow;
+    bool isBoss;
 
     Vector2 direction;
 
-    public void SetData(AttackType attackType, Transform owner, Transform target, float speed, UnityAction action, float damageBuff = 0f)
+    public void SetData(AttackType attackType, Transform owner, Transform target, float speed, UnityAction action, float damageBuff = 0f, bool isBoss = false)
     {
         Owner = owner;
         m_AttackType = attackType;
         this.speed = speed;
         this.action = action;
         this.target = target;
+        this.isBoss = isBoss;
         DamageBuff = damageBuff;
         TotalDamage = m_AttackType.attack_damage + DamageBuff;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Monster"))
+        if (collision.CompareTag("Monster")|| collision.CompareTag("Player"))
         {
             if (m_AttackType.attack_type == EnAttackType.missile)
             {

@@ -17,10 +17,4 @@ public class CryptureData : Unit
 
     public int m_cryptureType;
     public int parts_char_type { get { return m_cryptureType; } set { m_cryptureType = value; } }
-
-    public void SetData(float hp, float speed, int def, float hpRegen, int sizeX, int sizeY, float gachaPer)
-    {
-        base.SetData(hp, speed, def, hpRegen, sizeX, sizeY);
-        m_fGachaPer = gachaPer;
-    }
 }

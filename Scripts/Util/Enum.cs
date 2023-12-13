@@ -1,3 +1,11 @@
+public enum AudioChannel
+{
+    BGM,
+    UI,
+    SFX,
+
+    Length
+}
 
 public enum EnCryptureType
 {
@@ -152,7 +160,6 @@ public enum EnDrop1stType
     Length
 }
 
-
 public enum EnDropType
 {
     Utility,
@@ -193,6 +200,7 @@ public enum EnUIPanel
     Option,
     GameStart,
     StageSelect,
+    End,
 
     Length
 }
@@ -209,6 +217,23 @@ public enum EnSummonType
 {
     bomb,
     mine,
+
+    Length
+}
+
+/// <summary>
+/// 0 - RestSelect 휴식 내 선택지
+/// 1 - SkillSelect 휴식 내 선택할 수 있는 스킬 리스트
+/// 2 - CryptureList 휴식 내 스킬을 등록할 크립쳐 리스트
+/// 3 - ChangeSkill
+/// </summary>
+/// <param name="restIndex"></param>
+public enum EnRestPanelOrder
+{
+    restSelect,
+    skillSelect,
+    cryptureList,
+    changeSkill,
 
     Length
 }

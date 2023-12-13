@@ -41,53 +41,53 @@ public class Roster : MonoBehaviour
 
     void SetHeaderSlot()//처음 셋팅
     {
-        for (int i = 0; i < DataManager.Instance.TempRoster.Length; i++)
-        {
-            headerSlots[i].SetCrypture(this, i, i);
-        }
+        //for (int i = 0; i < DataManager.Instance.TempRoster.Length; i++)
+        //{
+        //    headerSlots[i].SetCrypture(this, i, i);
+        //}
     }
 
     public void ChangeRoster(Transform slot, int cryptureIndex, int rosterIndex)
     {
-        DataManager.Instance.TempRoster[rosterIndex] = DataManager.Instance.GStarCrypture[cryptureIndex];
-        headerSlots[rosterIndex].SetCrypture(this, rosterIndex, cryptureIndex);
+        //DataManager.Instance.TempRoster[rosterIndex] = DataManager.Instance.GStarCrypture[cryptureIndex];
+        //headerSlots[rosterIndex].SetCrypture(this, rosterIndex, cryptureIndex);
 
-        isRegister = false;
-        SetCryptureList();
+        //isRegister = false;
+        //SetCryptureList();
 
-        register.SetActive(false);
-        cryptureList.SetActive(true);
+        //register.SetActive(false);
+        //cryptureList.SetActive(true);
 
     }
 
     void SetCryptureList()
     {
-        for (int i = 0; i < cryptureListContent.childCount; i++)
-        {
-            cryptureListContent.GetChild(i).gameObject.SetActive(false);
-        }
+        //for (int i = 0; i < cryptureListContent.childCount; i++)
+        //{
+        //    cryptureListContent.GetChild(i).gameObject.SetActive(false);
+        //}
 
-        for (int i = 0; i < DataManager.Instance.GStarCrypture.Count; i++)
-        {
-            for (int j = 0; j < DataManager.Instance.TempRoster.Length; j++)
-            {
-                if (DataManager.Instance.TempRoster[j] == DataManager.Instance.GStarCrypture[i])
-                    continue;
+        //for (int i = 0; i < DataManager.Instance.GStarCrypture.Count; i++)
+        //{
+        //    for (int j = 0; j < DataManager.Instance.TempRoster.Length; j++)
+        //    {
+        //        if (DataManager.Instance.TempRoster[j] == DataManager.Instance.GStarCrypture[i])
+        //            continue;
 
-                CryptureSlot slot;
-                if (cryptureListContent.childCount > i)
-                {
-                    cryptureListContent.GetChild(i).gameObject.SetActive(true);
-                    slot = cryptureListContent.GetChild(i).GetComponent<CryptureSlot>();
-                    slot.SetCrypture(canvas, i);
-                }
-                else
-                {
-                    slot = Instantiate(cryptureSlot, cryptureListContent).GetComponent<CryptureSlot>();
-                    slot.SetCrypture(canvas, i);
-                }
-            }
-        }
+        //        CryptureSlot slot;
+        //        if (cryptureListContent.childCount > i)
+        //        {
+        //            cryptureListContent.GetChild(i).gameObject.SetActive(true);
+        //            slot = cryptureListContent.GetChild(i).GetComponent<CryptureSlot>();
+        //            slot.SetCrypture(canvas, i);
+        //        }
+        //        else
+        //        {
+        //            slot = Instantiate(cryptureSlot, cryptureListContent).GetComponent<CryptureSlot>();
+        //            slot.SetCrypture(canvas, i);
+        //        }
+        //    }
+        //}
     }
 
     public void OpenRegister(int index)

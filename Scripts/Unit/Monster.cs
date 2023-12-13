@@ -18,17 +18,17 @@ public class Monster : MonoBehaviour
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] GameObject SkillList;
     [SerializeField] public Transform ReadyTiles;
-    [SerializeField] float speed;
-    [SerializeField] float range;
 
-    MonsterData data;
+    MonsterData m_data;
+    public MonsterData Data { get { return m_data; } }
+
     InstanceController m_Controller;
     TileEventListener m_TileListener;
     public List<Skill> m_SkillList;
 
     void Update()
     {
-        if (!m_Controller.FreezeMonster)
+        //if (!m_Controller.FreezeMonster)
         {
             if (m_isReady)
             {
@@ -43,7 +43,7 @@ public class Monster : MonoBehaviour
             }
         }
 
-        if (data.index == 10006)
+        if (m_data.index == 10006)
             CheckSkill(EnSkillConditionType.time);
 
         if (DataManager.Instance.KILLALL)
@@ -55,26 +55,29 @@ public class Monster : MonoBehaviour
     public void SetData(InstanceController controller, int index)
     {
         m_Controller = controller;
-        data = DataManager.Instance.MonsterInfo[index];
-        m_Hp = data.monster_hp;
+        m_data = DataManager.Instance.MonsterInfo[index];
+        if (index == 13001)
+            hpBar.transform.localPosition = new Vector3(0, 3f, 0);
+        m_Hp = Data.monster_hp;
         m_MaxHp = m_Hp;
-        spriteRenderer.sprite = Resources.Load<Sprite>($"TempImage/{data.monster_resource}");
+        spriteRenderer.sprite = Resources.Load<Sprite>($"TempImage/{Data.monster_resource}");
         m_isReady = true;
 
+        transform.localScale = new Vector3(Data.monster_size_x, Data.monster_size_y);
         drop.SetData(controller);
-        if (data.attack_idx > 0)
-            m_TileListener = AttackManager.Instance.MakeReadyTile(DataManager.Instance.AttackTypeInfo[data.attack_idx], transform, ReadyTiles);
+        if (Data.attack_idx > 0)
+            m_TileListener = AttackManager.Instance.MakeReadyTile(DataManager.Instance.AttackTypeInfo[Data.attack_idx], transform, ReadyTiles, Data.monster_type == EnMonsterType.boss);
 
         SetSkills();
     }
 
     void SetSkills()
     {
-        if (DataManager.Instance.SkillInfo.ContainsKey(data.skill_idx))
+        if (DataManager.Instance.SkillInfo.ContainsKey(Data.skill_idx))
         {
             Skill skill = new GameObject().AddComponent<Skill>();
             skill.transform.SetParent(SkillList.transform);
-            skill.SetData(data.skill_idx, null, this);
+            skill.SetData(Data.skill_idx, null, this);
             m_SkillList.Add(skill);
         }
     }
@@ -85,64 +88,45 @@ public class Monster : MonoBehaviour
 
         spriteRenderer.flipX = m_Controller.FirstCrypture.transform.position.x > transform.position.x;
 
-        if (distance <= data.monster_aggression_x * data.monster_aggression_y)
+        if (distance <= Data.monster_aggression_x * Data.monster_aggression_y)
         {
-            transform.position = Vector3.Lerp(transform.position, m_Controller.FirstCrypture.transform.position, data.monster_speed * 0.3f * Time.deltaTime);
+            transform.position = Vector3.Lerp(transform.position, m_Controller.FirstCrypture.transform.position, Data.monster_speed * 0.3f * Time.deltaTime);
         }
+    }
+
+    void FollowUp()
+    {
+        //if (m_Controller.Direction.x < 0 && spine.skeleton.ScaleX < 0)
+        //{
+        //    spine.skeleton.ScaleX *= -1;
+        //}
+        //else if (m_Controller.Direction.x > 0 && spine.skeleton.ScaleX > 0)
+        //{
+        //    spine.skeleton.ScaleX *= -1;
+        //}
+
+        //m_fDistance = Vector3.Distance(HeadObject.localPosition, transform.localPosition);
+
+        //float T = Time.deltaTime * m_fDistance / DataManager.MinDistance * m_Controller.FollowSpeed;
+
+        //if (T > 0.1f)
+        //    T = 0.1f;
+
+        //transform.localPosition = Vector3.Slerp(transform.localPosition, HeadObject.localPosition, T);
+        //ReadyTiles.rotation = Quaternion.Slerp(ReadyTiles.localRotation, HeadArrow.localRotation, T);
+        //if (AttackArrow != null)
+        //    AttackArrow.localRotation = Quaternion.Slerp(AttackArrow.localRotation, HeadArrow.localRotation, T);
     }
 
     public void Die()
     {
         if (m_isDead) return;
         m_isDead = true;
-
-        if (data.index == 10001)
-        {
-            m_Controller.m_nSpawned10001--;
-        }
-        else if (data.index == 10002)
-        {
-            m_Controller.m_nSpawned10002--;
-        }
-        else if (data.index == 10003)
-        {
-            m_Controller.m_nSpawned10003--;
-        }
-        else if (data.index == 10004)
-        {
-            m_Controller.m_nSpawned10004--;
-        }
-        else if (data.index == 10005)
-        {
-            m_Controller.m_nSpawned10005--;
-        }
-        else if (data.index == 10006)
-        {
-            m_Controller.m_nSpawned10006--;
-        }
-        else if (data.index == 10007)
-        {
-            m_Controller.m_nSpawned10007--;
-        }
-        else if (data.index == 10008)
-        {
-            m_Controller.m_nSpawned10008--;
-        }
-        else if (data.index == 10009)
-        {
-            m_Controller.m_nSpawned10009--;
-            CheckSkill(EnSkillConditionType.die);
-        }
-        else if (data.index == 13001)
-        {
-            m_Controller.m_nSpawned13001--;
-        }
-
         hpBar.SetActive(false);
         boxCollider.enabled = false;
-        m_Controller.AddScore(data.monster_score);
+        m_Controller.AddScore(Data.monster_score);
         m_Controller.CheckCryptureSkill(EnSkillConditionType.finalHit);
-        m_Controller.killCount += 1;
+        EventManager.Instance.OnEventMonsterDie();
         StartCoroutine(Dying());
     }
 
@@ -151,7 +135,7 @@ public class Monster : MonoBehaviour
         //최대 체력 이상으로 리젠 불가능하도록 처리
         if (m_Hp < m_MaxHp)
         {
-            m_Hp += data.monster_hp_regen;
+            m_Hp += Data.monster_hp_regen;
 
             if (m_Hp > m_MaxHp)
                 m_Hp = m_MaxHp;
@@ -167,7 +151,7 @@ public class Monster : MonoBehaviour
 
     public void CalculateDamage(float attack_damage)
     {
-        float damage = attack_damage - data.monster_def;
+        float damage = attack_damage - Data.monster_def;
         if (damage <= 0)
             damage = 1;
 

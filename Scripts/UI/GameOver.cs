@@ -12,6 +12,7 @@ public class GameOver : MonoBehaviour
     [SerializeField] Button restart;
     [SerializeField] Text countTime;
     [SerializeField] Text score;
+    [SerializeField] Text combo;
     [SerializeField] Text resumeCount;
     [SerializeField] GameObject continueBoard;
     [SerializeField] GameObject gameOverBoard;
@@ -27,16 +28,15 @@ public class GameOver : MonoBehaviour
         spendMoney.onClick.AddListener(() => { StopCoroutine(continueCount); StartCoroutine(Resume()); });
         home.onClick.AddListener(() => { GoHome(); });
         restart.onClick.AddListener(() => { ReStart(); });
-
-        score.text = canvas.now.m_fScore.ToString();
     }
 
     void OnEnable()
     {
         if (canvas.now.isFirstGameOver)
         {
+            EventManager.Instance.OnEventFirstGameOver();
             FirstGameOver();
-            canvas.now.isFirstGameOver = false;
+            EventManager.Instance.OnEventInstanceValueReset();
         }
         else
         {
@@ -44,20 +44,24 @@ public class GameOver : MonoBehaviour
         }
     }
 
+    void EndOfGame()
+    {
+        DataManager.Instance.RecentLayer = -1;
+        DataManager.Instance.KILLALL = true;
+        EventManager.Instance.OnEventResetGameOverStack();
+        EventManager.Instance.OnEventInstanceValueReset();
+    }
+
     void GoHome()
     {
-        canvas.now.isFirstGameOver = true;
-        DataManager.Instance.RecentLayer = 0;
-        canvas.now.m_fScore = 0f;
-        canvas.OnPanel(EnUIPanel.GameStart);
+        EndOfGame();
+        EventManager.Instance.OnEventOnPanel(EnUIPanel.GameStart);
     }
 
     void ReStart()//로스터 그대로, 1층부터 다시
     {
-        DataManager.Instance.RecentLayer = 0;
-        canvas.now.m_fScore = 0f;
-        canvas.now.isFirstGameOver = true;
-        canvas.OnPanel(EnUIPanel.StageSelect);
+        EndOfGame();
+        EventManager.Instance.OnEventOnPanel(EnUIPanel.StageSelect);
     }
 
     public void FirstGameOver()
@@ -70,6 +74,8 @@ public class GameOver : MonoBehaviour
 
     public void LastGameOver()
     {
+        score.text = canvas.now.m_fScore.ToString();
+        combo.text = canvas.now.KillCombo.ToString();
         gameOverBoard.SetActive(true);
         continueBoard.SetActive(false);
     }
@@ -102,6 +108,6 @@ public class GameOver : MonoBehaviour
         }
 
         resumeCount.gameObject.SetActive(false);
-        canvas.OnPanel(EnUIPanel.Instance);
+        EventManager.Instance.OnEventOnPanel(EnUIPanel.Instance);
     }
 }

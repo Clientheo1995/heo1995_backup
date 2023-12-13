@@ -78,7 +78,7 @@ public class SkillData
     int equipCheck;
     string img;
     float per;
-    
+
 
     public int index { get { return indx; } set { indx = value; } }
     public int skill_condition_group { get { return conditionGroupNum; } set { conditionGroupNum = value; } }
@@ -152,11 +152,11 @@ public class SkillEffect
     //0 : 고정 수치나 퍼센테이지 수치를 기입하지 않음	
     //1 : 고정 수치	
     //2 : 퍼센테이지 기입
-    EnSkillFix_PerType fixPerType; 
+    EnSkillFix_PerType fixPerType;
 
- //fix_per_type에서 1 또는 2에 해당하는 경우 고정 수치 또는 퍼센테이지를 기입하도록 함
- //퍼센테이지의 경우 소수점 1번째까지 계산하도록 한다.
- //기입이 필요 없는 경우 0으로 두도록 한다.
+    //fix_per_type에서 1 또는 2에 해당하는 경우 고정 수치 또는 퍼센테이지를 기입하도록 함
+    //퍼센테이지의 경우 소수점 1번째까지 계산하도록 한다.
+    //기입이 필요 없는 경우 0으로 두도록 한다.
     float fixPerWrite;
 
     public int index { get { return indx; } set { indx = value; } }
@@ -251,6 +251,7 @@ public class Mode
 
 public class Stage
 {
+    public bool isBoss;
     int indx;
     int firstRemainCount;
     int remainCount;

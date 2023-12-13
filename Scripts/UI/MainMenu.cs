@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
     void Start()
     {
         roster2.onClick.AddListener(()=> {
-            canvas.OnPanel(EnUIPanel.Roster);
+            EventManager.Instance.OnEventOnPanel(EnUIPanel.Roster);
             roster1.SetActive(true);
             stageSelect1.SetActive(false);
             stageSelect2.gameObject.SetActive(true);
@@ -21,7 +21,7 @@ public class MainMenu : MonoBehaviour
         });
 
         stageSelect2.onClick.AddListener(()=> {
-            canvas.OnPanel(EnUIPanel.GameStart);
+            EventManager.Instance.OnEventOnPanel(EnUIPanel.GameStart);
             roster1.SetActive(false);
             roster2.gameObject.SetActive(true);
             stageSelect1.SetActive(true);
@@ -29,7 +29,7 @@ public class MainMenu : MonoBehaviour
         });
 
         option.onClick.AddListener(()=> {
-            canvas.OnPanel(EnUIPanel.Option);
+            EventManager.Instance.OnEventOnPanel(EnUIPanel.Option);
         });
     }
 }
