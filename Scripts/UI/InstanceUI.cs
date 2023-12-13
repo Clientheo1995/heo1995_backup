@@ -1,5 +1,4 @@
 using UnityEngine;
-using static EventManager;
 
 public class InstanceCanvas : MonoBehaviour
 {
@@ -12,18 +11,18 @@ public class InstanceCanvas : MonoBehaviour
 
     void Awake()
     {
-        EventManager.Instance.ESetNextStage += SetNextStage;
-        EventManager.Instance.EOnPanel += OnPanel;
-        EventManager.Instance.EOffPanel += OffPanel;
-        EventManager.Instance.EOnRestPanel += OnRestPanel;
+        EventManager.ESetNextStage += SetNextStage;
+        EventManager.EOnPanel += OnPanel;
+        EventManager.EOffPanel += OffPanel;
+        EventManager.EOnRestPanel += OnRestPanel;
     }
 
     void OnDestroy()
     {
-        EventManager.Instance.ESetNextStage -= SetNextStage;
-        EventManager.Instance.EOnPanel -= OnPanel;
-        EventManager.Instance.EOffPanel -= OffPanel;
-        EventManager.Instance.EOnRestPanel -= OnRestPanel;
+        EventManager.ESetNextStage -= SetNextStage;
+        EventManager.EOnPanel -= OnPanel;
+        EventManager.EOffPanel -= OffPanel;
+        EventManager.EOnRestPanel -= OnRestPanel;
     }
 
     void Start()
@@ -35,7 +34,7 @@ public class InstanceCanvas : MonoBehaviour
         Debug.Log("toss stage data");
         if (node.stageType == EnStageType.Normal)
         {
-            EventManager.Instance.OnEventSetStageData(stageIndex, node, isBoss);
+            EventManager.OnEventSetStageData(stageIndex, node, isBoss);
             OnPanel(EnUIPanel.Instance);
         }
         else if (node.stageType == EnStageType.Rest)
@@ -77,7 +76,7 @@ public class InstanceCanvas : MonoBehaviour
                 DataManager.Instance.GameStart = true;
                 instance.gameObject.SetActive(true);
                 joystick.SetActive(true);
-                EventManager.Instance.OnEventInitialize();
+                EventManager.OnEventInitialize();
                 //if (now.isBoss)
                 //    SoundManager.Instance.SetSound(AudioChannel.BGM, "bgm_battle_6");
                 //else

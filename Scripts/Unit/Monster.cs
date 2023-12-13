@@ -126,7 +126,7 @@ public class Monster : MonoBehaviour
         boxCollider.enabled = false;
         m_Controller.AddScore(Data.monster_score);
         m_Controller.CheckCryptureSkill(EnSkillConditionType.finalHit);
-        EventManager.Instance.OnEventMonsterDie();
+        EventManager.OnEventMonsterDie();
         StartCoroutine(Dying());
     }
 

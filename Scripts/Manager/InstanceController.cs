@@ -1,11 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
-
-using static EventManager;
 
 public class InstanceController : MonoBehaviour
 {
@@ -15,7 +11,6 @@ public class InstanceController : MonoBehaviour
     [SerializeField] GameObject stageSelect;
     [SerializeField] int mapIndex;
 
-    float m_fScore;
     List<Crypture> CryptureList;
     List<Monster> MonsterList;
     Vector2 Direction;
@@ -30,26 +25,25 @@ public class InstanceController : MonoBehaviour
     bool isBoss;
     bool isFirstGameOver = true;
     int goNextStageCut;
-    int killCount;
-    int killCombo;
-    
+
     List<SkillData> RestSkillList;
 
     void Awake()
     {
-        EventManager.Instance.EInitialize += GameInitialize;
-        EventManager.Instance.EStageRestEffect += StageRest;
-        EventManager.Instance.EFirstGameOver += CheckFIrstGameOver;
-        EventManager.Instance.EResetGameOverStack += ResetGameOverStack;
-        EventManager.Instance.EInstanceValueReset += ValueReset;
-        EventManager.Instance.EMonsterDie += MonsterDie;
+        EventManager.EInitialize += GameInitialize;
+        EventManager.EStageRestEffect += StageRest;
+        EventManager.EFirstGameOver += CheckFIrstGameOver;
+        EventManager.EResetGameOverStack += ResetGameOverStack;
+        EventManager.EInstanceValueReset += ValueReset;
+        EventManager.EMonsterDie += MonsterDie;
+        GameInitialize();
     }
 
     void ValueReset()
     {
-        m_fScore = 0f;
-        killCount = 0;
-        killCombo = 0;
+        DataManager.Instance.CurrentScore = 0f;
+        DataManager.Instance.CurrentKillCount = 0;
+        DataManager.Instance.CurrentCombo = 0;
         isFirstGameOver = true;
         isBoss = false;
         goNextStageCut = 0;
@@ -65,19 +59,19 @@ public class InstanceController : MonoBehaviour
 
         FirstCrypture.gameObject.SetActive(true);
         FirstCrypture.transform.position = Vector3.zero;
-        FirstCrypture.SetData(this, DataManager.Instance.User.RosterCryptures[0], null);
-        CryptureList.Add(FirstCrypture);
+        FirstCrypture.SetData(this, /*DataManager.Instance.User.RosterCryptures[0]*/null, null);
+        //CryptureList.Add(FirstCrypture);
         FollowSpeed = FirstCrypture.m_Speed * 3;//임시
 
-        if (DataManager.Instance.RecentLayer == DataManager.Instance.Layers.Count - 1)
-            mapIndex = Maps.Count - 1;
-        else
-            mapIndex = UnityEngine.Random.Range(0, Maps.Count - 1);
-        Map = Maps[mapIndex];
-        for (int i = 0; i < Maps.Count; i++)
-        {
-            Maps[i].SetActive(mapIndex == i);
-        }
+        //if (DataManager.Instance.RecentLayer == DataManager.Instance.Layers.Count - 1)
+        //    mapIndex = Maps.Count - 1;
+        //else
+        //    mapIndex = UnityEngine.Random.Range(0, Maps.Count - 1);
+        //Map = Maps[mapIndex];
+        //for (int i = 0; i < Maps.Count; i++)
+        //{
+        //    Maps[i].SetActive(mapIndex == i);
+        //}
     }
 
     void StageRest(int index)
@@ -87,7 +81,7 @@ public class InstanceController : MonoBehaviour
             case 0://낮잠 최대체력의 20퍼마큼 모든 크립쳐 회복
                 FirstCrypture.m_Hp += FirstCrypture.m_MaxHp * 0.2f;
                 SoundManager.Instance.SetSound(AudioChannel.UI, "heal");
-                EventManager.Instance.OnEventOnRestPanel(EnRestPanelOrder.Length);
+                EventManager.OnEventOnRestPanel(EnRestPanelOrder.Length);
                 break;
             case 1://드르러엉
                 {
@@ -97,12 +91,12 @@ public class InstanceController : MonoBehaviour
                     if (result == 0)//50퍼확률로 최대체력의40퍼만큼 모든크립쳐 회복
                     {
                         FirstCrypture.m_Hp += FirstCrypture.m_MaxHp * 0.4f;
-                        EventManager.Instance.OnEventOnRestPanel(EnRestPanelOrder.Length);
+                        EventManager.OnEventOnRestPanel(EnRestPanelOrder.Length);
                     }
                     else// 50퍼확률로 최대체력의 10퍼만큼 회복 + 일반전투 진입
                     {
                         FirstCrypture.m_Hp += FirstCrypture.m_MaxHp * 0.1f;
-                        EventManager.Instance.OnEventOnPanel(EnUIPanel.Instance);
+                        EventManager.OnEventOnPanel(EnUIPanel.Instance);
                     }
                 }
                 break;
@@ -124,14 +118,14 @@ public class InstanceController : MonoBehaviour
                         }
 
                         SoundManager.Instance.SetSound(AudioChannel.UI, "DM-CGS-45");
-                        EventManager.Instance.OnEventOnRestPanel(EnRestPanelOrder.restSelect);
+                        EventManager.OnEventOnRestPanel(EnRestPanelOrder.restSelect);
                     }
                     else
                     {
                         FirstCrypture.m_Hp += FirstCrypture.m_MaxHp * 0.05f;
                         SoundManager.Instance.SetSound(AudioChannel.UI, "DM-CGS-02");
                         //미획득
-                        EventManager.Instance.OnEventOnRestPanel(EnRestPanelOrder.Length);
+                        EventManager.OnEventOnRestPanel(EnRestPanelOrder.Length);
                     }
                 }
                 break;
@@ -150,17 +144,17 @@ public class InstanceController : MonoBehaviour
 
     void MonsterDie()
     {
-        killCount += 1;
+        DataManager.Instance.CurrentKillCount += 1;
     }
 
     void OnDestroy()
     {
-        EventManager.Instance.EInitialize -= GameInitialize;
-        EventManager.Instance.EStageRestEffect -= StageRest;
-        EventManager.Instance.EFirstGameOver -= CheckFIrstGameOver;
-        EventManager.Instance.EResetGameOverStack -= ResetGameOverStack;
-        EventManager.Instance.EInstanceValueReset -= ValueReset;
-        EventManager.Instance.EMonsterDie -= MonsterDie;
+        EventManager.EInitialize -= GameInitialize;
+        EventManager.EStageRestEffect -= StageRest;
+        EventManager.EFirstGameOver -= CheckFIrstGameOver;
+        EventManager.EResetGameOverStack -= ResetGameOverStack;
+        EventManager.EInstanceValueReset -= ValueReset;
+        EventManager.EMonsterDie -= MonsterDie;
     }
 
     void Start()
@@ -191,7 +185,7 @@ public class InstanceController : MonoBehaviour
 
         if (DataManager.Instance.GameStart)
         {
-            if (killCount >= goNextStageCut)
+            if (DataManager.Instance.CurrentKillCount >= goNextStageCut)
             {
                 Clear();
             }
@@ -226,9 +220,9 @@ public class InstanceController : MonoBehaviour
 
     public void AddScore(int monster_score)
     {
-        m_fScore += monster_score;
-        ScoreText.text = $"Score: {m_fScore}";
-        GOScore.text = $"Score: {m_fScore}";
+        DataManager.Instance.CurrentScore += monster_score;
+        ScoreText.text = $"Score: {DataManager.Instance.CurrentScore}";
+        GOScore.text = $"Score: {DataManager.Instance.CurrentScore}";
     }
 
     Vector3 SetSpawnPoint()
@@ -338,7 +332,7 @@ public class InstanceController : MonoBehaviour
     {
         isBoss = false;
         DataManager.Instance.GameStart = false;
-        EventManager.Instance.OnEventOnPanel(EnUIPanel.GameClear);
+        EventManager.OnEventOnPanel(EnUIPanel.GameClear);
         DataManager.Instance.KILLALL = true;
         FirstCrypture.transform.position = Vector3.zero;
     }
@@ -350,7 +344,7 @@ public class InstanceController : MonoBehaviour
 
     public void GameOver()
     {
-        EventManager.Instance.OnEventOnPanel(EnUIPanel.GameOver);
+        EventManager.OnEventOnPanel(EnUIPanel.GameOver);
     }
 
     public void CheckCryptureSkill(EnSkillConditionType condition)
@@ -372,8 +366,7 @@ public class InstanceController : MonoBehaviour
     public void SetStageData(int stageIndex, MapNode node, bool isBoss)
     {
         this.isBoss = isBoss;
-        killCombo = 0;
-        killCount = 0;
+        ValueReset();
         DataManager.Instance.ThisStage = DataManager.Instance.StageInfo[stageIndex];
         goNextStageCut = DataManager.Instance.RecentLayer * DataManager.Instance.ThisStage.monster_stair_clear_plus + DataManager.Instance.ThisStage.monster_first_stair_clear_ea;
 

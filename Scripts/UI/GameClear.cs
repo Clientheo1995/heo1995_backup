@@ -13,11 +13,11 @@ public class GameClear : MonoBehaviour
         {
             if (DataManager.Instance.RecentLayer == DataManager.Instance.Layers.Count - 1)
             {
-                EventManager.Instance.OnEventOnPanel(EnUIPanel.End);
+                EventManager.OnEventOnPanel(EnUIPanel.End);
             }
             else
             {
-                EventManager.Instance.OnEventOnPanel(EnUIPanel.StageSelect);
+                EventManager.OnEventOnPanel(EnUIPanel.StageSelect);
             }
         });
     }

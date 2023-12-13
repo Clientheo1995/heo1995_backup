@@ -19,6 +19,7 @@ public class GameOver : MonoBehaviour
 
     Coroutine continueCount = null;
     int remainSecond = 10;
+    bool m_bIsFirstGameOver=true;
 
     void Start()
     {
@@ -32,11 +33,12 @@ public class GameOver : MonoBehaviour
 
     void OnEnable()
     {
-        if (canvas.now.isFirstGameOver)
+        if (m_bIsFirstGameOver)//이벤트 없이 어떻게 첫 게임오버인지 알 수 있나
         {
-            EventManager.Instance.OnEventFirstGameOver();
+            EventManager.OnEventFirstGameOver();
             FirstGameOver();
-            EventManager.Instance.OnEventInstanceValueReset();
+            EventManager.OnEventInstanceValueReset();
+            m_bIsFirstGameOver = false;
         }
         else
         {
@@ -48,23 +50,23 @@ public class GameOver : MonoBehaviour
     {
         DataManager.Instance.RecentLayer = -1;
         DataManager.Instance.KILLALL = true;
-        EventManager.Instance.OnEventResetGameOverStack();
-        EventManager.Instance.OnEventInstanceValueReset();
+        EventManager.OnEventResetGameOverStack();
+        EventManager.OnEventInstanceValueReset();
     }
 
     void GoHome()
     {
         EndOfGame();
-        EventManager.Instance.OnEventOnPanel(EnUIPanel.GameStart);
+        EventManager.OnEventOnPanel(EnUIPanel.GameStart);
     }
 
     void ReStart()//로스터 그대로, 1층부터 다시
     {
         EndOfGame();
-        EventManager.Instance.OnEventOnPanel(EnUIPanel.StageSelect);
+        EventManager.OnEventOnPanel(EnUIPanel.StageSelect);
     }
 
-    public void FirstGameOver()
+    void FirstGameOver()
     {
         continueBoard.SetActive(true);
         gameOverBoard.SetActive(false);
@@ -72,10 +74,10 @@ public class GameOver : MonoBehaviour
         continueCount = StartCoroutine(Count());
     }
 
-    public void LastGameOver()
+    void LastGameOver()
     {
-        score.text = canvas.now.m_fScore.ToString();
-        combo.text = canvas.now.KillCombo.ToString();
+        score.text = DataManager.Instance.CurrentScore.ToString();
+        combo.text = DataManager.Instance.CurrentCombo.ToString();
         gameOverBoard.SetActive(true);
         continueBoard.SetActive(false);
     }
@@ -108,6 +110,6 @@ public class GameOver : MonoBehaviour
         }
 
         resumeCount.gameObject.SetActive(false);
-        EventManager.Instance.OnEventOnPanel(EnUIPanel.Instance);
+        EventManager.OnEventOnPanel(EnUIPanel.Instance);
     }
 }

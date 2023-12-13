@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static EventManager;
 
 public class CanvasController : MonoBehaviour
 {
@@ -20,14 +19,14 @@ public class CanvasController : MonoBehaviour
 
     void Awake()
     {
-        EventManager.Instance.EOnPanel += OnPanel;
-        EventManager.Instance.EOffPanel += OffPanel;
+        EventManager.EOnPanel += OnPanel;
+        EventManager.EOffPanel += OffPanel;
     }
 
     void OnDestroy()
     {
-        EventManager.Instance.EOnPanel -= OnPanel;
-        EventManager.Instance.EOffPanel -= OffPanel;
+        EventManager.EOnPanel -= OnPanel;
+        EventManager.EOffPanel -= OffPanel;
     }
 
     void Start()

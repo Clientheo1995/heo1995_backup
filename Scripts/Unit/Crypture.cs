@@ -1,9 +1,6 @@
 using Spine.Unity;
-
 using System.Collections;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-
 using UnityEngine;
 
 public class Crypture : MonoBehaviour
@@ -23,7 +20,6 @@ public class Crypture : MonoBehaviour
     [SerializeField] GameObject DamageBuffSfX;
     [SerializeField] GameObject DefBuffSfX;
 
-
     public float TotalDamage;
     public float FixDotHeal;
     public float PercentDotHeal;
@@ -38,10 +34,8 @@ public class Crypture : MonoBehaviour
     float m_fDistance;
     float m_fCurTime;
 
-    Vector2 m_vt2Direction = Vector2.up;
+    Vector2 m_vt2Direction;
     [SerializeField] InstanceController m_Controller;
-    TileEventListener m_TileListener;
-
     UserCryptureData m_data;
     public UserCryptureData Data { get { return m_data; } }
 
@@ -53,20 +47,12 @@ public class Crypture : MonoBehaviour
 
     public List<Skill> m_SkillList;
 
-    void Start()
-    {
-        //StartCoroutine(Delay());
-    }
-
-    IEnumerator Delay()
-    {
-        yield return DataManager.Instance.DATALOADCOMPLETE;
-    }
-
     public void SetData(InstanceController controller, UserCryptureData data, Transform head)
     {
         m_Controller = controller;
         m_data = data;
+        m_Speed = 5;
+        if (data == null) return;
         m_baseStat = DataManager.Instance.CryptureInfo[data.Index];
         m_Hp = m_baseStat.char_hp;
         m_MaxHp = m_Hp;
@@ -114,11 +100,6 @@ public class Crypture : MonoBehaviour
                 Debug.Log($"해당 어택타입은 0입니다.");
             else
                 m_attackType.attack_critical = PartData.MakeUp(m_attackType.attack_critical);
-        }
-        int atIndex = PartData.Tail();
-        if (atIndex > 0)
-        {
-            m_TileListener = AttackManager.Instance.MakeReadyTile(DataManager.Instance.AttackTypeInfo[atIndex], transform, ReadyTiles);
         }
 
         //현재 데이터
@@ -172,11 +153,7 @@ public class Crypture : MonoBehaviour
     {
         if (DataManager.Instance.GameStart)
         {
-            //if (HeadObject == null)
-                HeadMovement();
-            //else
-            //    FollowUp();
-
+            Movement();
             m_fCurTime += Time.deltaTime;
 
             if (m_fCurTime > 1f)
@@ -186,6 +163,15 @@ public class Crypture : MonoBehaviour
             }
         }
     }
+
+    IEnumerator Attack()
+    {
+        while (true)
+        {
+            yield return null;
+        }
+    }
+
 
     void HpRegen()
     {
@@ -231,12 +217,12 @@ public class Crypture : MonoBehaviour
     //https://scvtwo.tistory.com/111
     public void SetDirection(Vector2 direction)
     {
-        m_Controller.Direction = direction;
         m_vt2Direction = direction;
     }
 
-    void HeadMovement()
+    void Movement()
     {
+        float magnitude = Mathf.Clamp01(m_vt2Direction.magnitude);
         m_vt2Direction.Normalize();
 
         if (m_vt2Direction.x < 0 && spine.skeleton.ScaleX < 0)
@@ -248,7 +234,7 @@ public class Crypture : MonoBehaviour
             spine.skeleton.ScaleX *= -1;
         }
 
-        transform.Translate(m_vt2Direction * m_Speed * Time.deltaTime, Space.World);
+        transform.Translate(m_vt2Direction * m_Speed * magnitude * Time.deltaTime, Space.World);
 
         //회전식
         if (m_vt2Direction != Vector2.zero)
@@ -267,10 +253,8 @@ public class Crypture : MonoBehaviour
             m_Hp -= 10;
             UpdateHpBar();
         }
-        else if (collision.CompareTag("Wall"))
+        if (collision.CompareTag("MonsterTile"))
         {
-            //https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=ka87921001&logNo=221574578423
-            Die();
         }
     }
 
@@ -317,206 +301,6 @@ public class Crypture : MonoBehaviour
         else
         {
             UpdateHpBar();
-        }
-    }
-
-    public void AddItemBuff(EnDropTypeEffect effectType, float value1, float value2, float value3, float value4, float value5, float value6)
-    {
-        switch (effectType)
-        {
-            case EnDropTypeEffect.Utility_damageUp:
-                {
-                    float factor = value1 * 0.01f;
-                    m_TileListener.DamageBuff += m_TileListener.Damage * factor;
-                }
-                break;
-            case EnDropTypeEffect.Utility_defUp:
-                {
-                    float factor = value1 * 0.01f;
-                    m_Def += m_Def * factor;
-                }
-                break;
-            case EnDropTypeEffect.Utility_hpUp:
-                {
-                    float factor = value1 * 0.01f;
-                    m_Hp += m_MaxHp * factor;
-                    if (m_Hp > m_MaxHp)
-                        m_Hp = m_MaxHp;
-                    UpdateHpBar();
-                }
-                break;
-        }
-    }
-
-    public void AddSkillBuff(EnSkillEffectType effectType, EnSkillFix_PerType fixPerType, float addValue)
-    {
-        switch (effectType)
-        {
-            case EnSkillEffectType.dmgInc:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_TileListener.DamageBuff += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_TileListener.DamageBuff += m_TileListener.Damage * factor;
-                }
-
-                break;
-            case EnSkillEffectType.dmgDec:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_TileListener.DamageBuff += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_TileListener.DamageBuff += m_TileListener.Damage * factor;
-                }
-
-                break;
-            case EnSkillEffectType.defInc:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_Def += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_Def += m_baseStat .char_def* factor;
-                }
-
-                break;
-            case EnSkillEffectType.defDec:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_Def += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_Def += m_baseStat.char_def * factor;
-                }
-
-                break;
-            case EnSkillEffectType.hpRegenInc:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_HpRegen += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_HpRegen += m_baseStat.char_hp_regen * factor;
-                }
-                break;
-            case EnSkillEffectType.hpRegenDec:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_HpRegen += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_HpRegen += m_baseStat.char_hp_regen * factor;
-                }
-                break;
-            case EnSkillEffectType.maxHpInc:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_MaxHp += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_MaxHp += m_baseStat.char_hp * factor;
-                }
-                if (m_MaxHp < 0)
-                    m_MaxHp = 0;
-                break;
-            case EnSkillEffectType.maxHpDec:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_MaxHp += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_MaxHp += m_baseStat.char_hp * factor;
-                }
-                if (m_MaxHp < 0)
-                    m_MaxHp = 0;
-                break;
-            case EnSkillEffectType.bomb:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                }
-                break;
-            case EnSkillEffectType.laser:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                }
-                break;
-            case EnSkillEffectType.gainHp:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    FixDotHeal += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    PercentDotHeal += FixDotHeal * factor;
-                }
-
-                if (FixDotHeal < 0)
-                    FixDotHeal = 0;
-                if (PercentDotHeal < 0)
-                    PercentDotHeal = 0;
-                break;
-
-            case EnSkillEffectType.gainHpWhenAttack:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    m_Hp += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    m_Hp += m_baseStat.char_hp * factor;
-                }
-                break;
-            case EnSkillEffectType.fire:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                    FixDotDeal += (int)addValue;
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                    float factor = addValue * 0.01f;
-                    PercentDotDeal += FixDotDeal * factor;
-                }
-
-                if (FixDotDeal < 0)
-                    FixDotDeal = 0;
-                if (PercentDotDeal < 0)
-                    PercentDotDeal = 0;
-                break;
-            case EnSkillEffectType.defSheild:
-                if (fixPerType == EnSkillFix_PerType.fix)
-                {
-                }
-                else if (fixPerType == EnSkillFix_PerType.percent)
-                {
-                }
-                break;
         }
     }
 

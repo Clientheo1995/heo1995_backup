@@ -49,6 +49,11 @@ public class DataManager : Singleton<DataManager>
 
 
     public List<Crypture> PlayerCryptureList = new List<Crypture>();
+
+    public float CurrentScore;
+    public int CurrentKillCount;
+    public int CurrentCombo;
+
     #region
 
     public void Resume()

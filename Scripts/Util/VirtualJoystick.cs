@@ -11,9 +11,8 @@ public class VirtualJoystick : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     [SerializeField]
     Crypture FirstCrypture;
 
-    [SerializeField, Range(10f, 288f)]
-    float m_leverRange;
-    Vector2 m_vtInputVector;
+    Vector2 lastPos;
+    Vector2 currentPos;
     bool m_bInput;
 
     void Awake()
@@ -31,35 +30,36 @@ public class VirtualJoystick : MonoBehaviour, IBeginDragHandler, IDragHandler, I
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        //Debug.Log("Begin");
+        m_lever.gameObject.SetActive(true);
+        lastPos = eventData.position;
         ControlJoystickLever(eventData);
         m_bInput = true;
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        //Debug.Log("Drag");
         ControlJoystickLever(eventData);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        //Debug.Log("End");
         m_bInput = false;
-        m_lever.anchoredPosition = Vector2.zero;
+        m_lever.gameObject.SetActive(false);
+        FirstCrypture.SetDirection(Vector2.zero);
     }
 
     void ControlJoystickLever(PointerEventData eventData)
     {
-        Vector2 inputDir = new Vector2(eventData.position.x - m_rectTransform.position.x, eventData.position.y - m_rectTransform.position.y) ;
-        Vector2 clampedDir = inputDir.magnitude < m_leverRange ? inputDir : inputDir.normalized * m_leverRange;
-        m_lever.anchoredPosition = clampedDir;
-        m_vtInputVector = clampedDir / m_leverRange;
+        currentPos = eventData.position;
+
+        m_lever.position = currentPos;
+
+        Vector2 pos = currentPos - lastPos;
+        currentPos = pos.normalized;
     }
 
     void InputControlVector()
     {
-        //Debug.Log($"{m_vtInputVector.x}, {m_vtInputVector.y}");
-        FirstCrypture.SetDirection(m_vtInputVector);
+        FirstCrypture.SetDirection(currentPos);
     }
 }

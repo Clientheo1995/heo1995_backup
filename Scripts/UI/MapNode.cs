@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
-
-using static EventManager;
 
 public class MapNode : MonoBehaviour
 {
@@ -89,7 +86,7 @@ public class MapNode : MonoBehaviour
                 x.gameObject.SetActive(true);
                 //해당 스테이지 셋팅 후, 기록
                 DataManager.Instance.RecentLayer = this.layer;
-                EventManager.Instance.OnEventSetNextStage(this.stageIndex, this, this.isBoss);
+                EventManager.OnEventSetNextStage(this.stageIndex, this, this.isBoss);
             }
             else
             {
