@@ -22,10 +22,6 @@ public class MonsterData : Unit
     public float monster_def { get { return m_nDef; } set { m_nDef = value; } }
     public int skill_idx { get { return skillIdx; } set { skillIdx = value; } }
     public int attack_idx { get { return attackTypeIndex; } set { attackTypeIndex = value; } }
-    public int monster_size_x { get { return m_nSizeX; } set { m_nSizeX = value; } }
-    public int monster_size_y { get { return m_nSizeY; } set { m_nSizeY = value; } }
-    public int monster_aggression_x { get { return aggroX; } set { aggroX = value; } }
-    public int monster_aggression_y { get { return aggroY; } set { aggroY = value; } }
     public float monster_spawn_per { get { return spawnRate; } set { spawnRate = value; } }
     public float monster_spawn_minus_per { get { return spawnRateDecrease; } set { spawnRateDecrease = value; } }
     public float monster_spawn_minus_limit { get { return spawnDecreaseLimit; } set { spawnDecreaseLimit = value; } }

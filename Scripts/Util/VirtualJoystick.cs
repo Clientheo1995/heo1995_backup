@@ -9,7 +9,7 @@ public class VirtualJoystick : MonoBehaviour, IBeginDragHandler, IDragHandler, I
     RectTransform m_rectTransform;
 
     [SerializeField]
-    Crypture FirstCrypture;
+    Character FirstCrypture;
 
     Vector2 lastPos;
     Vector2 currentPos;

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,29 +16,24 @@ public class Monster : MonoBehaviour
     [SerializeField] BoxCollider2D boxCollider;
     [SerializeField] SpriteRenderer spriteRenderer;
     [SerializeField] GameObject SkillList;
-    [SerializeField] public Transform ReadyTiles;
 
     MonsterData m_data;
     public MonsterData Data { get { return m_data; } }
 
     InstanceController m_Controller;
-    TileEventListener m_TileListener;
     public List<Skill> m_SkillList;
 
     void Update()
     {
-        //if (!m_Controller.FreezeMonster)
+        if (m_isReady)
         {
-            if (m_isReady)
-            {
-                Movement();
-                m_fCurTime += Time.deltaTime;
+            Movement();
+            m_fCurTime += Time.deltaTime;
 
-                if (m_fCurTime > 1f)
-                {
-                    m_fCurTime = 0;
-                    HpRegen();
-                }
+            if (m_fCurTime > 1f)
+            {
+                m_fCurTime = 0;
+                HpRegen();
             }
         }
 
@@ -56,18 +50,13 @@ public class Monster : MonoBehaviour
     {
         m_Controller = controller;
         m_data = DataManager.Instance.MonsterInfo[index];
-        if (index == 13001)
-            hpBar.transform.localPosition = new Vector3(0, 3f, 0);
         m_Hp = Data.monster_hp;
         m_MaxHp = m_Hp;
         spriteRenderer.sprite = Resources.Load<Sprite>($"TempImage/{Data.monster_resource}");
         m_isReady = true;
 
-        transform.localScale = new Vector3(Data.monster_size_x, Data.monster_size_y);
+        //transform.localScale = new Vector3(Data.monster_size_x, Data.monster_size_y);
         drop.SetData(controller);
-        if (Data.attack_idx > 0)
-            m_TileListener = AttackManager.Instance.MakeReadyTile(DataManager.Instance.AttackTypeInfo[Data.attack_idx], transform, ReadyTiles, Data.monster_type == EnMonsterType.boss);
-
         SetSkills();
     }
 
@@ -79,6 +68,8 @@ public class Monster : MonoBehaviour
             skill.transform.SetParent(SkillList.transform);
             skill.SetData(Data.skill_idx, null, this);
             m_SkillList.Add(skill);
+
+
         }
     }
 
@@ -87,35 +78,7 @@ public class Monster : MonoBehaviour
         float distance = Vector3.Distance(m_Controller.FirstCrypture.transform.position, transform.position);
 
         spriteRenderer.flipX = m_Controller.FirstCrypture.transform.position.x > transform.position.x;
-
-        if (distance <= Data.monster_aggression_x * Data.monster_aggression_y)
-        {
-            transform.position = Vector3.Lerp(transform.position, m_Controller.FirstCrypture.transform.position, Data.monster_speed * 0.3f * Time.deltaTime);
-        }
-    }
-
-    void FollowUp()
-    {
-        //if (m_Controller.Direction.x < 0 && spine.skeleton.ScaleX < 0)
-        //{
-        //    spine.skeleton.ScaleX *= -1;
-        //}
-        //else if (m_Controller.Direction.x > 0 && spine.skeleton.ScaleX > 0)
-        //{
-        //    spine.skeleton.ScaleX *= -1;
-        //}
-
-        //m_fDistance = Vector3.Distance(HeadObject.localPosition, transform.localPosition);
-
-        //float T = Time.deltaTime * m_fDistance / DataManager.MinDistance * m_Controller.FollowSpeed;
-
-        //if (T > 0.1f)
-        //    T = 0.1f;
-
-        //transform.localPosition = Vector3.Slerp(transform.localPosition, HeadObject.localPosition, T);
-        //ReadyTiles.rotation = Quaternion.Slerp(ReadyTiles.localRotation, HeadArrow.localRotation, T);
-        //if (AttackArrow != null)
-        //    AttackArrow.localRotation = Quaternion.Slerp(AttackArrow.localRotation, HeadArrow.localRotation, T);
+        transform.position = Vector3.Lerp(transform.position, m_Controller.FirstCrypture.transform.position, Data.monster_speed * 0.3f * Time.deltaTime);
     }
 
     public void Die()
@@ -125,7 +88,6 @@ public class Monster : MonoBehaviour
         hpBar.SetActive(false);
         boxCollider.enabled = false;
         m_Controller.AddScore(Data.monster_score);
-        m_Controller.CheckCryptureSkill(EnSkillConditionType.finalHit);
         EventManager.OnEventMonsterDie();
         StartCoroutine(Dying());
     }

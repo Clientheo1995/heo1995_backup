@@ -21,7 +21,7 @@ public class CryptureSlot : MonoBehaviour
     int tempIndex;
 
     EnSlotState slotState = EnSlotState.buttonOff;
-    Crypture data;
+    Character data;
 
     public void SetCrypture(CanvasController canvas, int index, EnSlotState slotState = EnSlotState.buttonOff)
     {

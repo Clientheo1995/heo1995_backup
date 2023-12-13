@@ -15,7 +15,6 @@ public class Bullet : MonoBehaviour
     AttackType m_AttackType;
     [SerializeField] SpriteRenderer spriteRenderer;
     float m_fCurTime;
-    bool isFollow;
     bool isBoss;
 
     Vector2 direction;
@@ -34,17 +33,9 @@ public class Bullet : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Monster")|| collision.CompareTag("Player"))
+        if (collision.CompareTag("Monster") || collision.CompareTag("Player"))
         {
-            if (m_AttackType.attack_type == EnAttackType.missile)
-            {
-                AttackManager.Instance.MakeDamageTile(m_AttackType, DamageBuff, Owner, target, transform.rotation);
-            }
-            else
-            {
-                collision.transform.GetComponent<Monster>().CalculateDamage(m_AttackType.attack_damage);
-            }
-
+            collision.transform.GetComponent<Monster>().CalculateDamage(m_AttackType.attack_damage);
             Die();
         }
         else if (collision.CompareTag("Wall"))

@@ -130,8 +130,6 @@ public class Drop : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            collision.transform.GetComponent<Crypture>().CheckSkill(EnSkillConditionType.get);
-
             switch (m_dropType)
             {
                 case EnDropType.Utility:
@@ -200,12 +198,12 @@ public class Drop : MonoBehaviour
         }
         else
         {
-            m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, effect.effect1, effect.effect2, effect.effect3, effect.effect4, effect.effect5, effect.effect6);
+            //m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, effect.effect1, effect.effect2, effect.effect3, effect.effect4, effect.effect5, effect.effect6);
             m_instanceController.FirstCrypture.OnEffects(effect.drop_item_effect);
 
             yield return new WaitForSeconds(time);
 
-            m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, -effect.effect1, -effect.effect2, -effect.effect3, -effect.effect4, -effect.effect5, -effect.effect6);
+            //m_instanceController.FirstCrypture.AddItemBuff(effect.drop_item_effect, -effect.effect1, -effect.effect2, -effect.effect3, -effect.effect4, -effect.effect5, -effect.effect6);
         }
 
         Destroy(gameObject);

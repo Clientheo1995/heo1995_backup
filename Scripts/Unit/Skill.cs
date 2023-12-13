@@ -7,11 +7,11 @@ public class Skill : MonoBehaviour
 {
     class EffectForPrint
     {
-        internal Crypture crypture;
+        internal Character crypture;
         internal Monster monster;
         internal SkillEffect effect;
 
-        public EffectForPrint(Crypture crypture, Monster monster, SkillEffect effect)
+        public EffectForPrint(Character crypture, Monster monster, SkillEffect effect)
         {
             this.crypture = crypture;
             this.monster = monster;
@@ -32,7 +32,7 @@ public class Skill : MonoBehaviour
     bool m_bCoolTimeOK;
     bool m_bConditionOK;
 
-    Crypture m_Crypture;
+    Character m_Crypture;
     Monster m_Monster;
 
     public void Update()
@@ -49,7 +49,7 @@ public class Skill : MonoBehaviour
         m_fForConditionTime += Time.deltaTime;
     }
 
-    public void SetData(int index, Crypture crypture = null, Monster monster = null)
+    public void SetData(int index, Character crypture = null, Monster monster = null)
     {
         m_Data = DataManager.Instance.SkillInfo[index];
         m_Crypture = crypture;
@@ -218,9 +218,9 @@ public class Skill : MonoBehaviour
     {
         if (efp.crypture != null)
         {
-            m_Crypture.AddSkillBuff(efp.effect.effect_type, efp.effect.fix_per_type, efp.effect.fix_per_write);
+            //m_Crypture.AddSkillBuff(efp.effect.effect_type, efp.effect.fix_per_type, efp.effect.fix_per_write);
             yield return new WaitForSeconds(time);
-            m_Crypture.AddSkillBuff(efp.effect.effect_type, efp.effect.fix_per_type, -efp.effect.fix_per_write);
+            //m_Crypture.AddSkillBuff(efp.effect.effect_type, efp.effect.fix_per_type, -efp.effect.fix_per_write);
         }
         else if (efp.monster != null)
         {
@@ -234,7 +234,7 @@ public class Skill : MonoBehaviour
         {
             //m_Crypture.AddBuff(effectType, addValue);
             yield return new WaitForSeconds(time);//controller 에서 스테이지가 어떻게 변하는지 체크하여 상태 변환
-                                                  //m_Crypture.AddBuff(effectType, -addValue);
+            //m_Crypture.AddBuff(effectType, -addValue);
         }
         else if (efp.monster != null)
         {

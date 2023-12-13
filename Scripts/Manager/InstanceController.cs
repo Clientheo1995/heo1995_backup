@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class InstanceController : MonoBehaviour
 {
-    [SerializeField] public Crypture FirstCrypture;
+    [SerializeField] public Character FirstCrypture;
     [SerializeField] Text ScoreText;
     [SerializeField] Text GOScore;
     [SerializeField] GameObject stageSelect;
     [SerializeField] int mapIndex;
 
-    List<Crypture> CryptureList;
+    List<Character> CryptureList;
     List<Monster> MonsterList;
     Vector2 Direction;
     float FollowSpeed;
@@ -162,45 +162,14 @@ public class InstanceController : MonoBehaviour
         m_Monster = Resources.Load<GameObject>("Prefabs/Monster");
     }
 
-    IEnumerator SpawnEnemies()
-    {
-        yield return null;
-        //if (!m_bIsSpawn)
-        //{
-        //    m_fCurTime += Time.deltaTime;
-
-        //    if (m_fCurTime > Spawn_Time)
-        //    {
-        //        m_fCurTime = 0;
-        //        m_bIsSpawn = true;
-        //    }
-        //}
-    }
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Clear();
-        }
-
         if (DataManager.Instance.GameStart)
         {
             if (DataManager.Instance.CurrentKillCount >= goNextStageCut)
             {
                 Clear();
             }
-
-            //if (!m_bIsSpawn10001)
-            //{
-            //    m_fCurTime10001 += Time.deltaTime;
-
-            //    if (m_fCurTime10001 > Spawn_Time_10001)
-            //    {
-            //        m_fCurTime10001 = 0;
-            //        m_bIsSpawn10001 = true;
-            //    }
-            //}
-            MonsterSpawnRule();
         }
     }
 
@@ -237,96 +206,8 @@ public class InstanceController : MonoBehaviour
         }
 
         Transform spawnPoints = Map.transform.Find("SpawnPoint");
-        return spawnPoints.GetChild(UnityEngine.Random.Range(0, spawnPoints.childCount)).position;
+        return spawnPoints.GetChild(Random.Range(0, spawnPoints.childCount)).position;
     }
-
-    void MonsterSpawnRule()//몬스터 스폰 규칙
-    {
-        //if (MonsterList.Count < Spawn_Max_EA)
-        //{
-        //    if (m_bIsSpawn)
-        //    {
-        //        m_bIsSpawn = false;
-        //        int spawnRate = Random.Range(1, 100);
-        //        if (spawnRate < Spawn_Per)
-        //        {
-        //        }
-        //    }
-        //}
-
-        //    if (m_nSpawned10001 < Spawn_Max_EA_10001)
-        //    {
-        //        if (m_bIsSpawn10001)
-        //        {
-        //            m_bIsSpawn10001 = false;
-        //            if (m_nSpawned10001 < Spawn_Min_EA_10001)
-        //            {
-        //                AddMonster(10001);
-        //                ++m_nSpawned10001;
-        //            }
-        //            else
-        //            {
-        //                int spawnRate = UnityEngine.Random.Range(1, 100);
-        //                if (spawnRate < Spawn_Per_10001)
-        //                {
-        //                    AddMonster(10001);
-        //                    ++m_nSpawned10001;
-        //                }
-        //            }
-        //        }
-        //    }
-
-
-        //if (isBoss)
-        //    if (m_nSpawned13001 <= Spawn_Max_EA_13001)
-        //    {
-        //        if (m_bIsSpawn13001)
-        //        {
-        //            m_bIsSpawn13001 = false;
-        //            if (m_nSpawned13001 < Spawn_Min_EA_13001)
-        //            {
-        //                AddMonster(13001);
-        //                ++m_nSpawned13001;
-        //            }
-        //            else
-        //            {
-        //                int spawnRate = UnityEngine.Random.Range(1, 100);
-        //                if (spawnRate < Spawn_Per_13001)
-        //                {
-        //                    AddMonster(13001);
-        //                    ++m_nSpawned13001;
-        //                }
-        //            }
-        //        }
-        //    }
-    }
-
-    //struct AvoidRect
-    //{
-    //    public float minX, minY, maxX, maxY;
-    //}
-
-    //void AvoidField(int index)
-    //{
-    //    //Vector3 newPos = new Vector3(UnityEngine.Random.Range(minX, minY), UnityEngine.Random.Range(maxX, maxY), 0f);
-    //    AvoidRect ar = new AvoidRect();
-    //    float x = 0f, y = 0f;
-
-    //    for (int i = 0; i < MonsterList.Count; i++)
-    //    {
-    //        switch (index)
-    //        {
-    //            case 10001:
-    //                x = Spawn_Prevention_X_10001 * 0.5f;
-    //                y = Spawn_Prevention_Y_10001 * 0.5f;
-    //                break;
-    //        }
-    //        ar.minX = MonsterList[i].transform.position.x - x;
-    //        ar.minY = MonsterList[i].transform.position.y - y;
-    //        ar.maxX = MonsterList[i].transform.position.x + x;
-    //        ar.maxY = MonsterList[i].transform.position.x + y;
-    //    }
-    //}
 
     void Clear()
     {
@@ -345,11 +226,6 @@ public class InstanceController : MonoBehaviour
     public void GameOver()
     {
         EventManager.OnEventOnPanel(EnUIPanel.GameOver);
-    }
-
-    public void CheckCryptureSkill(EnSkillConditionType condition)
-    {
-        FirstCrypture.CheckSkill(condition);
     }
 
     public void OpenStageSelect()

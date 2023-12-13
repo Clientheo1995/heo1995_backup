@@ -62,7 +62,7 @@ public class SummonObject : MonoBehaviour
             Debug.Log("BOOOOOOOOOOOOOOOM!!!!!!!!");
             effect.SetActive(true);
             sound.Play();
-            collision.transform.GetComponent<Crypture>().CalculateDamage(damage);
+            collision.transform.GetComponent<Character>().CalculateDamage(damage);
             Destroy(gameObject);
         }
     }

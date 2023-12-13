@@ -29,7 +29,7 @@ public class DataManager : Singleton<DataManager>
     //Table
     public Dictionary<string, string> StringTable = new Dictionary<string, string>();
 
-    public Dictionary<int, CryptureData> CryptureInfo = new Dictionary<int, CryptureData>();
+    public Dictionary<int, CharacterData> CryptureInfo = new Dictionary<int, CharacterData>();
     public Dictionary<int, MonsterData> MonsterInfo = new Dictionary<int, MonsterData>();
     public Dictionary<int, PartData> PartInfo = new Dictionary<int, PartData>();
     public Dictionary<int, AttackType> AttackTypeInfo = new Dictionary<int, AttackType>();
@@ -48,7 +48,7 @@ public class DataManager : Singleton<DataManager>
     public Dictionary<int, StageShop> StageShopInfo = new Dictionary<int, StageShop>();
 
 
-    public List<Crypture> PlayerCryptureList = new List<Crypture>();
+    public List<Character> PlayerCryptureList = new List<Character>();
 
     public float CurrentScore;
     public int CurrentKillCount;
