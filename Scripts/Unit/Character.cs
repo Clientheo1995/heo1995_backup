@@ -87,16 +87,16 @@ public class Character : MonoBehaviour
 
     void Update()
     {
-        if (DataManager.Instance.GameStart)
+        //if (DataManager.Instance.GameStart)
         {
             Movement();
-            m_fCurTime += Time.deltaTime;
+            //m_fCurTime += Time.deltaTime;
 
-            if (m_fCurTime > 1f)
-            {
-                m_fCurTime = 0;
-                HpRegen();
-            }
+            //if (m_fCurTime > 1f)
+            //{
+            //    m_fCurTime = 0;
+            //    HpRegen();
+            //}
         }
     }
 

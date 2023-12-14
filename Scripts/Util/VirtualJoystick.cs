@@ -46,6 +46,7 @@ public class VirtualJoystick : MonoBehaviour, IBeginDragHandler, IDragHandler, I
         m_bInput = false;
         m_lever.gameObject.SetActive(false);
         FirstCrypture.SetDirection(Vector2.zero);
+        
     }
 
     void ControlJoystickLever(PointerEventData eventData)
